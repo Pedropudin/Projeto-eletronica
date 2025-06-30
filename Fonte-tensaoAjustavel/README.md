@@ -33,9 +33,32 @@ Observações:
 - Para reduzir custos poderiam ser utilizados 4 diodos no lugar da ponte, porém foi escolhido não fazer isso pois como o circuito foi montado em uma protoboard as conexões não são perfeitas, assim muitas conexões podem aumentar a resistência interna do circuito, fazendo com os resistores tivessem que ser ajustados e causando possíveis problemas no circuito por conexões mal feitas.
 - Novamente para reduzir custos e melhorar a aparência do circuito alguns jumpers foram substituídos por pequenos fios de metal (recortados das pernas dos resistores que são os componentes mais baratos), diminuindo a poluição visual no circuito e economizando 95% do preço de cada jumper substituído (pois um resistor substitui 2 jumpers).
 
-## Funcionamento do Circuito
+## Imagem do Circuito no Simulador
 
-## Imagem do Circuito
+<img src="circuito-falstad.png">
+
+## Funcionamento do Circuito
+Retomando, a ideia do circuito é converter um sinal com tensão alta e alternada em um sinal com uma tensão contínua, menor e manipulável.
+
+Primeiramente o transformador usa a corrente variável de entrada junto de um conjunto de fios enrolados e a lei de faraday para alterar a tensão que entra no circuito, esse valor depende da tensão de entrada e da razão de fios enrolados no transformador, no nosso caso o transformador passa para o circuito uma tensão máxima de aproximadamente 25V.
+
+Depois disso a ponte de diodo é responsável por "modular" a tensão, ou seja, ela faz com que a tensão tenha apenas 1 sinal
+
+<img src="diode_bridge-graph-edited.png">
+<!-- Fonte: https://byjus.com/physics/bridge-rectifier/ -->
+
+O sinal está variando muito ainda, para resolver isso é utilizado o capacitor, ele armazena energia enquanto a tensão está aumentando, quando ela começa a diminuir ele libera esse energia na forma de tensão para o circuito, utilizando o capacitor correto conseguimos um sinal quase constante.
+
+<img src="capacitor-filter-graph.png">
+<!-- Fonte: https://www.physics-and-radio-electronics.com/electronic-devices-and-circuits/rectifier/fullwaverectifierwithfilter.html -->
+
+Após o capacitor é utilizado um resistor com um LED apenas para indicar que o circuito está funcionando até aquele ponto, a ideia é que seja possível ver que o LED tem um brilho quase constante (na visão humana não deve ser possível ver nenhuma diferença), porém essa parte não tem nenhuma função real no circuito.
+
+Para a parte do ajuste da tensão são utilizados alguns componentes um pouco mais complexos.
+A corrente é dividida em duas partes, uma vai para a saída do circuito, que aqui é representada por um resistor comum mas poderia ser qualquer componente eletrônico que se deseja ligar na fonte.
+Em um dos caminhos da corrente a existe um resistor com resistência maior, de forma que a corrente e tensão nesse caminho sejam menores, esse caminho possui outra separação, em uma utilizamos um diodo zenner para barrar a tensão e chegar na tensão anulada do circuito, já na segundo é utilizado o potênciometro para controlar a resistência, na saída do potênciometro é colocada a base do transistor, de forma que o potênciometro controle a tensão de saída do transistor.
+No outro caminho da corrente temos apenas alguns resistores para evitar corrente em excesso e o transistor, como a emissão do transistor é controlada pelo potênciometro ele retorna uma tensão que varia dentro dos parâmetros necessários.
+
 
 ## Vídeo do Circuito Funcionando
 
