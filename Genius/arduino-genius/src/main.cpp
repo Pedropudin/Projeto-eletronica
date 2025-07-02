@@ -78,7 +78,9 @@ void setup()
         pinMode(ledsPin[i], OUTPUT);
     }
 
-    randomSeed(analogRead(1)); // Uses an unconnected pin as random seed
+    pinMode(buzzer, OUTPUT);
+
+    randomSeed(analogRead(1) + analogRead(0)); // Uses an unconnected pin as random seed
 }
 
 void loop()
