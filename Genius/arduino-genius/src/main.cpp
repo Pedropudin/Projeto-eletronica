@@ -1,4 +1,5 @@
 #include <Arduino.h>
+# include "/home/pudim/Arduino/libraries/2820675-bbe995aa22826a8fbbb6b56ccd56513f9db6cb00/pitches.h"
 
 int playRound(int *values, int level, int position);
 void game_over_warning();
@@ -9,8 +10,60 @@ void leds_off();
 
 #define QUANTITY 5
 
+const int start_game[5] = {
+    NOTE_E3,
+    NOTE_E3,
+    NOTE_E3,
+    NOTE_C3,
+    NOTE_G3
+};
+
+const int next_level[4] = {
+    NOTE_F4,
+    NOTE_FS4,
+    NOTE_G4,
+    NOTE_GS4
+};
+
+const int lost_level[4] = {
+    NOTE_GS3,
+    NOTE_G3,
+    NOTE_FS3,
+    NOTE_F3
+};
+
+const int start_game_time[5] = {
+    400,
+    400,
+    400,
+    300,
+    500
+};
+
+const int next_level_time[4] = {
+    250,
+    250,
+    250,
+    1500
+};
+
+const int lost_level_time[4] = {
+    250,
+    250,
+    250,
+    1500
+};
+
 const int buttonsPin[QUANTITY] = {2, 3, 4, 5, 6};
 const int ledsPin[QUANTITY] = {7, 8, 9, 10, 11};
+const int buzzer = 13;
+const int soundButtons[QUANTITY] = {
+    NOTE_C5,
+    NOTE_D5,
+    NOTE_E5,
+    NOTE_F5,
+    NOTE_G5
+};
 
 int level = 1;
 int *values;
@@ -25,8 +78,7 @@ void setup()
         pinMode(ledsPin[i], OUTPUT);
     }
 
-    randomSeed(analogRead(0)); // Uses an unconnected pin as random seed
-    Serial.begin(9600);
+    randomSeed(analogRead(1)); // Uses an unconnected pin as random seed
 }
 
 void loop()
@@ -58,11 +110,15 @@ void loop()
                 digitalWrite(ledsPin[i], HIGH);
                 delay(100);
             }
+            for(int i=0 ; i<4 ; i++) {
+                tone(buzzer, next_level[i], next_level_time[i]);
+                delay(100);
+            }
             for(int i=0 ; i<QUANTITY ; i++) {
                 digitalWrite(ledsPin[i], LOW);
                 delay(100);
             }
-            delay(100);
+            delay(100); 
         } else {
             position += 1;
         }
@@ -79,29 +135,29 @@ int playRound(int *values, int level, int position)
     int played = false;
     int input = -1;
 
-    Serial.print("Esperando input\n");
     while(!played) {
         for(int i=0 ; i<QUANTITY ; i++) {
             if(digitalRead(buttonsPin[i]) == HIGH) {
                 played = true;
                 input = i;
                 digitalWrite(ledsPin[i], HIGH);
+                tone(buzzer, soundButtons[i]);
                 delay(300);
                 digitalWrite(ledsPin[i], LOW);
+                noTone(buzzer);
                 delay(10);
             }
         }
     }
 
-    Serial.print("Input foi: ");
-    Serial.print(input);
-    Serial.print("\n");
-
     return input == values[position];
 }
 
 void game_over_warning() {
-    Serial.print("PERDEU OTARIO");
+    for(int i=0 ; i<4 ; i++) {
+        tone(buzzer, lost_level[i], lost_level_time[i]);
+        delay(100);
+    }
 
     for(int i=0 ; i<3 ; i++) {
         leds_on();
@@ -112,7 +168,10 @@ void game_over_warning() {
 } 
 
 void game_start_warning() {
-    Serial.print("Comecando\n");
+    for(int i=0 ; i<5 ; i++) {
+        tone(buzzer, start_game[i], start_game_time[i]);
+        delay(100);
+    }
 
     leds_on();
     delay(1500);
@@ -121,14 +180,12 @@ void game_start_warning() {
 
 void blink_leds(int *values, int valuesSize) {
     for(int i=0 ; i<valuesSize ; i++) {
-        Serial.print("Acende: ");
-        Serial.print(values[i]);
-        Serial.print("\n");
-
         digitalWrite(ledsPin[values[i]], HIGH);
+        tone(buzzer, soundButtons[values[i]]);
         delay(1000);
+        noTone(buzzer);
         digitalWrite(ledsPin[values[i]], LOW);
-        delay(1000);
+        delay(900);
     }
 }
 
