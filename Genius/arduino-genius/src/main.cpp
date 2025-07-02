@@ -2,6 +2,7 @@
 # include "/home/pudim/Arduino/libraries/2820675-bbe995aa22826a8fbbb6b56ccd56513f9db6cb00/pitches.h"
 
 int playRound(int *values, int level, int position);
+int difficulty_selector(int *used);
 void game_over_warning();
 void game_start_warning();
 void blink_leds(int *values, int valuesSize);
@@ -65,10 +66,12 @@ const int soundButtons[QUANTITY] = {
     NOTE_G5
 };
 
-int level = 1;
-int *values;
+int level = 0;
+int *values = NULL;
 int game_over = false;
 int position = 0;
+int difficulty = -1;
+int used_quantity = QUANTITY;
 
 void setup()
 {
@@ -87,27 +90,40 @@ void loop()
 {
     if(game_over) {
         game_over_warning();
-        level = 1;
+        level = 0;
         position = 0;
         free(values);
         values = NULL;
+        difficulty = -1;
+        used_quantity = QUANTITY;
         game_over = false;
     }
+
+    if(difficulty == -1) {
+        difficulty = difficulty_selector(&used_quantity);
+    }
     
-    if(level == 1) {
+    if(level == 0) {
         game_start_warning();
     }
 
     if(position == 0) {
-        values = (int *)realloc(values, level * sizeof(int));
-        values[level - 1] = random(level - 1);
+        if(difficulty == 2) {
+            level += 2;
+            values = (int *)realloc(values, level * sizeof(int));
+            values[level - 2] = random(0,used_quantity);
+            values[level - 1] = random(0,used_quantity);
+        } else {
+            level += 1;
+            values = (int *)realloc(values, level * sizeof(int));
+            values[level - 1] = random(0,used_quantity);
+        }
         blink_leds(values, level);
     }
 
     if(playRound(values, level, position)) {
         if(position == (level - 1)) {
             position = 0;
-            level += 1;
             for(int i=0 ; i<QUANTITY ; i++) {
                 digitalWrite(ledsPin[i], HIGH);
                 delay(100);
@@ -127,9 +143,6 @@ void loop()
     } else {
         game_over = true;
     }
-
-    delay(10); // Used only for simulation
-    // TODO: remove delay in real arduino
 }
 
 int playRound(int *values, int level, int position)
@@ -138,7 +151,7 @@ int playRound(int *values, int level, int position)
     int input = -1;
 
     while(!played) {
-        for(int i=0 ; i<QUANTITY ; i++) {
+        for(int i=0 ; i<used_quantity ; i++) {
             if(digitalRead(buttonsPin[i]) == HIGH) {
                 played = true;
                 input = i;
@@ -153,6 +166,24 @@ int playRound(int *values, int level, int position)
     }
 
     return input == values[position];
+}
+
+int difficulty_selector(int *used) {
+    for(int i=0 ; i<3 ; i++) {
+        digitalWrite(ledsPin[i], HIGH);
+    }
+
+    while(true) {
+        for(int i=0 ; i<3 ; i++) {
+            if(digitalRead(buttonsPin[i]) == HIGH) {
+                if(i == 0) *used = 3;
+                for(int i=0 ; i<3 ; i++) {
+                    digitalWrite(ledsPin[i], LOW);
+                }
+                return i;
+            }
+        }
+    }
 }
 
 void game_over_warning() {
@@ -184,10 +215,10 @@ void blink_leds(int *values, int valuesSize) {
     for(int i=0 ; i<valuesSize ; i++) {
         digitalWrite(ledsPin[values[i]], HIGH);
         tone(buzzer, soundButtons[values[i]]);
-        delay(1000);
+        delay(600);
         noTone(buzzer);
         digitalWrite(ledsPin[values[i]], LOW);
-        delay(900);
+        delay(500);
     }
 }
 
