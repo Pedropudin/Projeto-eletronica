@@ -155,9 +155,11 @@ int playRound(int *values, int level, int position)
             if(digitalRead(buttonsPin[i]) == HIGH) {
                 played = true;
                 input = i;
-                digitalWrite(ledsPin[i], HIGH);
-                tone(buzzer, soundButtons[i]);
-                delay(300);
+                while(digitalRead(buttonsPin[i]) == HIGH) {
+                    digitalWrite(ledsPin[i], HIGH);
+                    tone(buzzer, soundButtons[i]);
+                    delay(300);
+                }
                 digitalWrite(ledsPin[i], LOW);
                 noTone(buzzer);
                 delay(10);
