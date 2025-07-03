@@ -59,7 +59,22 @@ A corrente é dividida em duas partes, uma vai para a saída do circuito, que aq
 Em um dos caminhos da corrente a existe um resistor com resistência maior, de forma que a corrente e tensão nesse caminho sejam menores, esse caminho possui outra separação, em uma utilizamos um diodo zenner para barrar a tensão e chegar na tensão anulada do circuito, já na segundo é utilizado o potênciometro para controlar a resistência, na saída do potênciometro é colocada a base do transistor, de forma que o potênciometro controle a tensão de saída do transistor.
 No outro caminho da corrente temos apenas alguns resistores para evitar corrente em excesso e o transistor, como a emissão do transistor é controlada pelo potênciometro ele retorna uma tensão que varia dentro dos parâmetros necessários.
 
+## Circuito Funcionando
 
-## Vídeo do Circuito Funcionando
+O circuito completo ficou:
+
+<img src="circuito-montado.jpeg">
+
+Fizemos um vídeo com uma breve explicação do funcionamento da fonte, mostrando o seu funcionamento e o limite máximo e mínimo da tensão:
+
+[![Explicação fonte](https://img.youtube.com/vi/x-UvqBl3jAs/0.jpg)](https://youtube.com/shorts/x-UvqBl3jAs)
 
 ## Imagem esquemática da PCB
+
+Para uma implementação real dessa fonte, seria recomendado faze-la numa placa de circuito impresso, fizemos também um diagrama para essa implementação.
+
+<img src="pcb.jpeg">
+
+O diagrama foi feito baseado no circuito abaixo:
+
+<img src="circuito-eagle.jpeg">
